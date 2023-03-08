@@ -1,0 +1,9 @@
+/* OVERALL STYLE */
+body
+{
+    background-color: rgb(10,20,10);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    color: antiquewhite;
+    text-align: center;
+}
