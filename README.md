@@ -9,6 +9,9 @@ at will.
 
 # To Do
 I want to work with mouseclick events to let you draw initial states/edit the current state,
-as well as alter the speed of animation and colors and other fun stuff. As of 
-this writing (3/7/2023) the program is brand new.
+as well as alter the speed of animation and colors and other fun stuff. 
+I also want to improve the algorithm performance: both the behind-the-scenes counting
+algo and the drawing algo are very naive and can be improved.. but
+
+As of this writing (3/7/2023) the program is brand new.
 
