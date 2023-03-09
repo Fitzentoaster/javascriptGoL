@@ -1,7 +1,7 @@
 // Global Constants
-const cellsize = 5;
-const rows = 120;
-const cols = 120;
+const cellsize = 2;
+const rows = 500/cellsize;
+const cols = 500/cellsize;
 const randomFactor = 8;
 const msWait = 100;
 const aliveColor = "white";
