@@ -1,88 +1,88 @@
 // Global Constants
-const cellsize = 2;
-const rows = 500/cellsize;
-const cols = 500/cellsize;
+const cellsize = 5;
+const rows = 600/cellsize;
+const cols = 600/cellsize;
 const randomFactor = 8;
 const msWait = 100;
-const aliveColor = "white";
+const aliveColor = "#FFFFFF";
 const deadColor = "#1a3d24";
 
-// Global variables
-let isGameActive = false;
-let boardArray = new Array(rows);
-let oldBoardArray = new Array(rows);
-let canvas = document.getElementById("cellboardcanvas");
-let ctx = canvas.getContext("2d");
+/******************************************************************************
+ * State Manager Class: has drawing variables and gamestate boolean
+ *****************************************************************************/
+class StateManager
+{
+    isGameActive;
+    canvas;
+    ctx;
+
+    constructor()
+    {
+        this.canvas = document.getElementById("cellboardcanvas");
+        this.ctx = this.canvas.getContext("2d");
+        this.isGameActive = false;
+    }
+}
+
+/******************************************************************************
+ * Boards class holds the board and the old board
+ *****************************************************************************/
+class Boards
+{
+    boardArray;
+    oldBoardArray;
+
+    constructor() 
+    {
+        this.boardArray = [];
+        this.oldBoardArray = [];
+        
+        for (let i = 0; i < rows; i++) 
+        {
+            [this.boardArray[i], this.oldBoardArray[i]] = [new Array(cols), new Array(cols)];
+        }
+    }
+}   
+
 
 /******************************************************************************
  * Registers event listeners to the buttons
  *****************************************************************************/
-const listeners = () =>
+const listeners = (sm, bd) =>
 {  
     document.getElementById("togglestatebutton").addEventListener("click", function () 
     {
-        document.getElementById("togglestatebutton").textContent = (isGameActive) ? "Start" : "Stop";
-        toggleState();
-        animLoop();
+        document.getElementById("togglestatebutton").textContent = (sm.isGameActive) ? "Start" : "Stop";
+        sm.isGameActive = !sm.isGameActive;
+        animLoop(sm, bd);
     });
 
     document.getElementById("randomizebutton").addEventListener("click", function ()
     {
-        randomizeBoard();
-        drawBoard();
+        randomizeBoard(bd);
+        drawBoard(sm, bd);
     });
-}
-
-/******************************************************************************
- * Initializes board arrays
- *****************************************************************************/
-const initBoard = () =>
-{
-    for (let i = 0; i < rows; i++)
-    {
-        boardArray[i] = new Array(cols);
-        oldBoardArray[i] = new Array(cols);
-    }
-    
-    let rowToPush = [];
-    for (let i = 0; i < rows; i++)
-    {
-        rowToPush.push(false);
-    }
-    
-    for (let i = 0; i < cols; i++)
-    {
-        boardArray.push(rowToPush);
-        oldBoardArray.push(rowToPush);
-    }
-}
-
-/******************************************************************************
- * Toggles game state
- *****************************************************************************/
-const toggleState = () =>
-{
-    isGameActive = !isGameActive;
 }
 
 /******************************************************************************
  * Draws the board to the canvas
  *****************************************************************************/
-const drawBoard = () =>
+const drawBoard = (sm, bd) =>
 {
+
     for(let i = 0; i < rows; i++)
     {
         for (let j = 0; j < cols; j++)
         {
-            if (boardArray[i][j])
+            if (bd.boardArray[i][j])
             {
-                ctx.fillStyle = aliveColor;
+                sm.ctx.fillStyle = aliveColor;
             }
             else
             {
-                ctx.fillStyle = deadColor;
+                sm.ctx.fillStyle = deadColor;
             }
-            ctx.fillRect(i*cellsize, j*cellsize, cellsize, cellsize);
+            sm.ctx.fillRect(i*cellsize, j*cellsize, cellsize, cellsize);
         }
     }
 }
@@ -90,20 +90,20 @@ const drawBoard = () =>
 /******************************************************************************
  * Updates the board to the next generation state
  *****************************************************************************/
-const updateBoard = () =>
+const updateBoard = (bd) =>
 {
-    copyArrays();
+    copyArrays(bd);
     for (let i = 0; i < rows; i++)
     {
         for (let j = 0; j < cols; j++)
         {
-            if (oldBoardArray[i][j])
+            if (bd.oldBoardArray[i][j])
             {
-                boardArray[i][j] = testLiveCell(i, j);
+                bd.boardArray[i][j] = testLiveCell(bd, i, j);
             }
             else
             {
-                boardArray[i][j] = testDeadCell(i, j);
+                bd.boardArray[i][j] = testDeadCell(bd, i, j);
             }
         }
     }
@@ -112,9 +112,9 @@ const updateBoard = () =>
 /******************************************************************************
  * Tests a living cell to see if it survives to the next generation
  *****************************************************************************/
-const testLiveCell = (x, y) =>
+const testLiveCell = (bd, x, y) =>
 {
-    let neighbors = countNeighbors(x, y);
+    let neighbors = countNeighbors(bd, x, y);
     if (neighbors === 2 || neighbors === 3)
     {
         return true;
@@ -128,9 +128,9 @@ const testLiveCell = (x, y) =>
 /******************************************************************************
  * Tests a dead cell to see if it is born next generation
  *****************************************************************************/
-const testDeadCell = (x, y) =>
+const testDeadCell = (bd, x, y) =>
 {
-    let neighbors = countNeighbors(x, y);
+    let neighbors = countNeighbors(bd, x, y);
     if (neighbors === 3)
     {
         return true;
@@ -144,9 +144,9 @@ const testDeadCell = (x, y) =>
 /******************************************************************************
  * Copies the boardArray to the oldBoardArray
  *****************************************************************************/
-const copyArrays = () =>
+const copyArrays = (bd) =>
 {
-    oldBoardArray = boardArray.map(inner => inner.slice())
+    bd.oldBoardArray = bd.boardArray.map(inner => inner.slice())
 }
 
 /******************************************************************************
@@ -157,7 +157,7 @@ const copyArrays = () =>
  * 
  * @return The number of live neighbors of the cell
  *****************************************************************************/
-const countNeighbors = (x, y) =>
+const countNeighbors = (bd, x, y) =>
 {
     let liveNeighbors = 0;
     for (let xOffset = -1; xOffset < 2; xOffset++)
@@ -174,11 +174,10 @@ const countNeighbors = (x, y) =>
                 let testX = x + xOffset;
                 let testY = y + yOffset;
 
-                if (testX < 0) {testX = rows - 1;}
-                if (testX > rows - 1) {testX = 0;}
-                if (testY < 0) {testY = cols - 1;}
-                if (testY > cols - 1) {testY = 0;}
-                if (oldBoardArray[testX][testY])
+                testX = wrap(testX, rows);
+                testY = wrap(testY, cols);
+
+                if (bd.oldBoardArray[testX][testY])
                 {
                     liveNeighbors++;
                 }
@@ -189,15 +188,25 @@ const countNeighbors = (x, y) =>
 }
 
 /******************************************************************************
+ * Wraps coordinate around the board
+ *****************************************************************************/
+const wrap = (coord, max) =>
+{
+    if (coord < 0) {return max - 1;}
+    if (coord > max - 1) {return 0;}
+    return coord;
+}
+
+/******************************************************************************
  * Randomizes board
  *****************************************************************************/
-const randomizeBoard = () =>
+const randomizeBoard = (bd) =>
 {
     for (let i = 0; i < rows; i++)
     {
         for (let j = 0; j < cols; j++)
         {
-            boardArray[i][j] = (Math.floor(Math.random() * randomFactor) === 1 ? true: false);
+            bd.boardArray[i][j] = (Math.floor(Math.random() * randomFactor) === 1 ? true: false);
         }
     }
     
@@ -206,21 +215,21 @@ const randomizeBoard = () =>
 /******************************************************************************
  * Update the board, then draw it function
  *****************************************************************************/
-const updateAndDraw = () =>
+const updateAndDraw = (sm, bd) =>
 {
-    updateBoard();
-    copyArrays();
-    drawBoard();
+    updateBoard(bd);
+    copyArrays(bd);
+    drawBoard(sm, bd);
 }
 
 /******************************************************************************
  * Starts and stops the animation loop
  *****************************************************************************/
-const animLoop = () =>
+const animLoop = (sm, bd) =>
 {
-    if (isGameActive)
+    if (sm.isGameActive)
     {
-        boardInterval = setInterval(updateAndDraw, msWait);
+        boardInterval = setInterval(() => updateAndDraw(sm, bd), msWait);
     }
     else
     {
@@ -229,5 +238,6 @@ const animLoop = () =>
 }
 
 // Main code to run on load
-initBoard();
-listeners();
+sm = new StateManager;
+bd = new Boards
+listeners(sm, bd);
