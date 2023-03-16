@@ -31,15 +31,25 @@ class Boards
 {
     boardArray;
     oldBoardArray;
+    changedBoardArray;
 
     constructor() 
     {
         this.boardArray = [];
         this.oldBoardArray = [];
-        
+        this.changedBoardArray = [];
+
         for (let i = 0; i < rows; i++) 
         {
-            [this.boardArray[i], this.oldBoardArray[i]] = [new Array(cols), new Array(cols)];
+            [this.boardArray[i], this.oldBoardArray[i], this.changedBoardArray[i]] = 
+            [new Array(cols), new Array(cols), new Array(cols)];
+        }
+        for (let i = 0; i < rows; i++)
+        {
+            for (let j = 0; j < rows; j++)
+            {
+                this.changedBoardArray[i][j] = true;
+            }
         }
     }
 }   
@@ -60,6 +70,7 @@ const listeners = (sm, bd) =>
     document.getElementById("randomizebutton").addEventListener("click", function ()
     {
         randomizeBoard(bd);
+        clearCanvas(sm);
         drawBoard(sm, bd);
     });
 }
@@ -69,19 +80,36 @@ const listeners = (sm, bd) =>
  *****************************************************************************/
 const drawBoard = (sm, bd) =>
 {
-
-    for(let i = 0; i < rows; i++)
+    for (let i = 0; i < rows; i++)
     {
         for (let j = 0; j < cols; j++)
         {
-            if (bd.boardArray[i][j])
+            if (bd.changedBoardArray[i][j])
             {
-                sm.ctx.fillStyle = aliveColor;
+                if (bd.boardArray[i][j])
+                {
+                    sm.ctx.fillStyle = aliveColor;
+                }
+                else
+                {
+                    sm.ctx.fillStyle = deadColor;
+                }
+                sm.ctx.fillRect(i*cellsize, j*cellsize, cellsize, cellsize);
             }
-            else
-            {
-                sm.ctx.fillStyle = deadColor;
-            }
+        }
+    }
+}
+
+/******************************************************************************
+ * Sets the canvas to all 'dead' cells
+ *****************************************************************************/
+const clearCanvas = (sm) =>
+{
+    for (let i = 0; i < rows; i++)
+    {
+        for (let j = 0; j < cols; j++)
+        {
+            sm.ctx.fillStyle = deadColor;
             sm.ctx.fillRect(i*cellsize, j*cellsize, cellsize, cellsize);
         }
     }
@@ -104,6 +132,14 @@ const updateBoard = (bd) =>
             else
             {
                 bd.boardArray[i][j] = testDeadCell(bd, i, j);
+            }
+            if (bd.oldBoardArray[i][j] === bd.boardArray[i][j])
+            {
+                bd.changedBoardArray[i][j] = false;
+            }
+            else
+            {
+                bd.changedBoardArray[i][j] = true;
             }
         }
     }
@@ -209,6 +245,7 @@ const randomizeBoard = (bd) =>
             bd.boardArray[i][j] = (Math.floor(Math.random() * randomFactor) === 1 ? true: false);
         }
     }
+    copyArrays(bd);
     
 }
 
