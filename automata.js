@@ -1,7 +1,4 @@
-// Global Constants
-const canvasWidth = document.getElementById("cellboardcanvas").width;
-const canvasHeight = document.getElementById("cellboardcanvas").height;
-
+//Global Constants
 const randomFactor = 8;
 const maxGps = 25;
 const minGps = 1;
@@ -22,6 +19,8 @@ class StateManager
     cellSize;
     rows;
     cols;
+    canvasWidth;
+    canvasHeight;
 
     constructor()
     {
@@ -34,8 +33,16 @@ class StateManager
         this.msWait = 100;
         this.gps = 10;
         this.cellSize = 5;
-        this.rows = canvasHeight / this.cellSize;
-        this.cols = canvasWidth / this.cellSize;
+        this.canvasWidth = document.documentElement.clientWidth;
+        this.canvasWidth = this.canvasWidth / this.cellSize;
+        this.canvasWidth = Math.floor(this.canvasWidth) * this.cellSize;
+        this.canvasWidth -= 50;
+        this.canvasHeight = document.documentElement.clientHeight;
+        this.canvasHeight = this.canvasHeight / this.cellSize;
+        this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
+        this.canvasHeight -= 200;
+        this.rows = Math.floor(this.canvasHeight / this.cellSize);
+        this.cols = Math.floor(this.canvasWidth / this.cellSize);
     }
 }
 
@@ -148,6 +155,22 @@ const listeners = (sm, bd) =>
         drawGrid(sm);
         document.getElementById("sizevalue").value = sm.cellSize + "PX";
     });
+
+    window.addEventListener("resize", function () 
+    {
+        sm.canvasWidth = document.documentElement.clientWidth;
+        sm.canvasWidth = sm.canvasWidth / sm.cellSize;
+        sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - 50;
+        sm.canvasHeight = document.documentElement.clientHeight - 200;
+        sm.canvasHeight = sm.canvasHeight / sm.cellSize;
+        sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
+        sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
+        sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
+        resizeCanvas(sm);
+        bd = new Boards(sm.rows, sm.cols);
+        clearBoard(sm, bd);
+        redrawBoard(sm, bd);
+    });
 }
 
 /******************************************************************************
@@ -180,7 +203,7 @@ const drawBoard = (sm, bd) =>
  *****************************************************************************/
 const clearCanvas = (sm) =>
 {
-    sm.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    sm.ctx.clearRect(0, 0, sm.canvasWidth, sm.canvasHeight);
 }
 
 /******************************************************************************
@@ -407,17 +430,17 @@ const drawGrid = (sm) =>
     sm.ctx.beginPath();
     if (sm.isGridActive)
     {
-        for (let i = 0; i < canvasWidth; i += sm.cellSize)
+        for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
         {
             sm.ctx.moveTo(i, 0);
-            sm.ctx.lineTo(i, canvasHeight);
+            sm.ctx.lineTo(i, sm.canvasHeight);
             sm.ctx.stroke();
         }
 
-        for (let i = 0; i < canvasHeight; i += sm.cellSize)
+        for (let i = 0; i < sm.canvasHeight; i += sm.cellSize)
         {
             sm.ctx.moveTo(0, i);
-            sm.ctx.lineTo(canvasWidth, i);
+            sm.ctx.lineTo(sm.canvasWidth, i);
             sm.ctx.stroke();
         }
     }
@@ -469,8 +492,9 @@ const sizeUp = (sm, bd) =>
             sm.cellSize = 40;
             break;
     }
-    sm.rows = canvasHeight / sm.cellSize;
-    sm.cols = canvasWidth / sm.cellSize;
+    resizeCanvas(sm);
+    sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
+    sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
     clearCanvas(sm);
     clearBoard(sm, bd);
     redrawBoard(sm, bd);
@@ -496,8 +520,9 @@ const sizeDown = (sm, bd) =>
             sm.cellSize = 5;
             break;
     }
-    sm.rows = canvasHeight / sm.cellSize;
-    sm.cols = canvasWidth / sm.cellSize;
+    resizeCanvas(sm);
+    sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
+    sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
     clearCanvas(sm);
     clearBoard(sm, bd);
     redrawBoard(sm, bd);
@@ -527,8 +552,15 @@ const toggleButtons = (sm) =>
     }
 }
 
+const resizeCanvas = (sm) =>
+{
+    document.getElementById("cellboardcanvas").width = sm.canvasWidth;
+    document.getElementById("cellboardcanvas").height = sm.canvasHeight;
+}
+
 // Main code to run on load
 sm = new StateManager;
+resizeCanvas(sm);
 bd = new Boards(sm.rows, sm.cols);
 redrawBoard(sm, bd);
 listeners(sm, bd);
