@@ -7,3 +7,20 @@ body
     color: antiquewhite;
     text-align: center;
 }
+
+canvas
+{
+    position: absolute;
+    left: 180px;
+    top: 100px;
+}
+
+#cellboardcanvas
+{
+    z-index: 2;
+}
+
+#gridboardcanvas
+{
+    z-index: 3;
+}
