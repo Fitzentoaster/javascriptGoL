@@ -1,11 +1,10 @@
 // Global Constants
-const cellsize = 10;
-const canvasWidth = document.getElementById("cellboardcanvas").clientWidth;
-const canvasHeight = document.getElementById("cellboardcanvas").clientHeight;
-const rows = canvasWidth/cellsize;
-const cols = canvasHeight/cellsize;
+const canvasWidth = document.getElementById("cellboardcanvas").width;
+const canvasHeight = document.getElementById("cellboardcanvas").height;
+
 const randomFactor = 8;
-const msWait = 100;
+const maxGps = 25;
+const minGps = 1;
 
 /******************************************************************************
  * State Manager Class: has drawing variables and gamestate boolean
@@ -20,6 +19,11 @@ class StateManager
     ctx;
     gridcanvas;
     gridctx;
+    gps;
+    msWait;
+    cellSize;
+    rows;
+    cols;
 
     constructor()
     {
@@ -27,10 +31,15 @@ class StateManager
         this.ctx = this.canvas.getContext("2d");
         this.gridcanvas = document.getElementById("gridboardcanvas");
         this.gridctx = this.gridcanvas.getContext("2d");
-        this.liveColor = "WhiteSmoke";
+        this.liveColor = "AntiqueWhite";
         this.deadColor = "DarkGreen";
         this.isGameActive = false;
         this.isGridActive = false;
+        this.msWait = 100;
+        this.gps = 10;
+        this.cellSize = 5;
+        this.rows = canvasHeight / this.cellSize;
+        this.cols = canvasWidth / this.cellSize;
     }
 }
 
@@ -43,18 +52,18 @@ class Boards
     oldBoardArray;
     changedBoardArray;
 
-    constructor() 
+    constructor(rows, cols) 
     {
         this.boardArray = [];
         this.oldBoardArray = [];
         this.changedBoardArray = [];
 
-        for (let i = 0; i < rows; i++) 
+        for (let i = 0; i < cols; i++) 
         {
             [this.boardArray[i], this.oldBoardArray[i], this.changedBoardArray[i]] = 
-            [new Array(cols), new Array(cols), new Array(cols)];
+            [new Array(rows), new Array(rows), new Array(rows)];
         }
-        for (let i = 0; i < rows; i++)
+        for (let i = 0; i < cols; i++)
         {
             for (let j = 0; j < rows; j++)
             {
@@ -74,16 +83,17 @@ const listeners = (sm, bd) =>
         document.getElementById("togglestatebutton").textContent = (sm.isGameActive) ? "Start" : "Stop";
         sm.isGameActive = !sm.isGameActive;
         animLoop(sm, bd);
+        toggleButtons(sm);
     });
 
     document.getElementById("randomizebutton").addEventListener("click", function ()
     {
-        randomizeBoard(bd);
+        randomizeBoard(sm, bd);
         clearCanvas(sm);
         drawBoard(sm, bd);
     });
 
-    document.getElementById("cellboardcanvas").addEventListener("mousedown", function (e)
+    document.getElementById("gridboardcanvas").addEventListener("mousedown", function (e)
     {
         if (!sm.isGameActive)
         {
@@ -109,6 +119,32 @@ const listeners = (sm, bd) =>
         sm.isGridActive = !sm.isGridActive;
         drawGrid(sm);
     });
+
+    document.getElementById("speedupbutton").addEventListener("click", function ()
+    {
+        speedUp(sm);
+        document.getElementById("gpsvalue").value = sm.gps + "GPS";
+    });
+
+    document.getElementById("speeddownbutton").addEventListener("click", function ()
+    {
+        speedDown(sm);
+        document.getElementById("gpsvalue").value = sm.gps + "GPS";
+    });
+
+    document.getElementById("sizeupbutton").addEventListener("click", function ()
+    {
+        sizeUp(sm, bd);
+        drawGrid(sm);
+        document.getElementById("sizevalue").value = sm.cellSize + "PX";
+    });
+
+    document.getElementById("sizedownbutton").addEventListener("click", function ()
+    {
+        sizeDown(sm, bd);
+        drawGrid(sm);
+        document.getElementById("sizevalue").value = sm.cellSize + "PX";
+    });
 }
 
 /******************************************************************************
@@ -116,9 +152,9 @@ const listeners = (sm, bd) =>
  *****************************************************************************/
 const drawBoard = (sm, bd) =>
 {
-    for (let i = 0; i < rows; i++)
+    for (let i = 0; i < sm.cols; i++)
     {
-        for (let j = 0; j < cols; j++)
+        for (let j = 0; j < sm.rows; j++)
         {
             if (bd.changedBoardArray[i][j])
             {
@@ -130,7 +166,7 @@ const drawBoard = (sm, bd) =>
                 {
                     sm.ctx.fillStyle = sm.deadColor;
                 }
-                sm.ctx.fillRect(i*cellsize, j*cellsize, cellsize, cellsize);
+                sm.ctx.fillRect(i * sm.cellSize, j * sm.cellSize, sm.cellSize, sm.cellSize);
             }
         }
     }
@@ -141,33 +177,26 @@ const drawBoard = (sm, bd) =>
  *****************************************************************************/
 const clearCanvas = (sm) =>
 {
-    for (let i = 0; i < rows; i++)
-    {
-        for (let j = 0; j < cols; j++)
-        {
-            sm.ctx.fillStyle = sm.deadColor;
-            sm.ctx.fillRect(i*cellsize, j*cellsize, cellsize, cellsize);
-        }
-    }
+    sm.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
 
 /******************************************************************************
  * Updates the board to the next generation state
  *****************************************************************************/
-const updateBoard = (bd) =>
+const updateBoard = (sm, bd) =>
 {
     copyArrays(bd);
-    for (let i = 0; i < rows; i++)
+    for (let i = 0; i < sm.cols; i++)
     {
-        for (let j = 0; j < cols; j++)
+        for (let j = 0; j < sm.rows; j++)
         {
             if (bd.oldBoardArray[i][j])
             {
-                bd.boardArray[i][j] = testLiveCell(bd, i, j);
+                bd.boardArray[i][j] = testLiveCell(sm, bd, i, j);
             }
             else
             {
-                bd.boardArray[i][j] = testDeadCell(bd, i, j);
+                bd.boardArray[i][j] = testDeadCell(sm, bd, i, j);
             }
 
             if (bd.oldBoardArray[i][j] === bd.boardArray[i][j])
@@ -185,9 +214,9 @@ const updateBoard = (bd) =>
 /******************************************************************************
  * Tests a living cell to see if it survives to the next generation
  *****************************************************************************/
-const testLiveCell = (bd, x, y) =>
+const testLiveCell = (sm, bd, x, y) =>
 {
-    let neighbors = countNeighbors(bd, x, y);
+    let neighbors = countNeighbors(sm, bd, x, y);
     if (neighbors === 2 || neighbors === 3)
     {
         return true;
@@ -201,9 +230,9 @@ const testLiveCell = (bd, x, y) =>
 /******************************************************************************
  * Tests a dead cell to see if it is born next generation
  *****************************************************************************/
-const testDeadCell = (bd, x, y) =>
+const testDeadCell = (sm, bd, x, y) =>
 {
-    let neighbors = countNeighbors(bd, x, y);
+    let neighbors = countNeighbors(sm, bd, x, y);
     if (neighbors === 3)
     {
         return true;
@@ -230,7 +259,7 @@ const copyArrays = (bd) =>
  * 
  * @return The number of live neighbors of the cell
  *****************************************************************************/
-const countNeighbors = (bd, x, y) =>
+const countNeighbors = (sm, bd, x, y) =>
 {
     let liveNeighbors = 0;
     for (let xOffset = -1; xOffset < 2; xOffset++)
@@ -247,8 +276,8 @@ const countNeighbors = (bd, x, y) =>
                 let testX = x + xOffset;
                 let testY = y + yOffset;
 
-                testX = wrap(testX, rows);
-                testY = wrap(testY, cols);
+                testX = wrap(testX, sm.cols);
+                testY = wrap(testY, sm.rows);
 
                 if (bd.oldBoardArray[testX][testY])
                 {
@@ -273,18 +302,17 @@ const wrap = (coord, max) =>
 /******************************************************************************
  * Randomizes board
  *****************************************************************************/
-const randomizeBoard = (bd) =>
+const randomizeBoard = (sm, bd) =>
 {
-    for (let i = 0; i < rows; i++)
+    for (let i = 0; i < sm.cols; i++)
     {
-        for (let j = 0; j < cols; j++)
+        for (let j = 0; j < sm.rows; j++)
         {
             bd.boardArray[i][j] = (Math.floor(Math.random() * randomFactor) === 1 ? true: false);
             bd.changedBoardArray[i][j] = true;
         }
     }
     copyArrays(bd);
-    
 }
 
 /******************************************************************************
@@ -292,7 +320,7 @@ const randomizeBoard = (bd) =>
  *****************************************************************************/
 const updateAndDraw = (sm, bd) =>
 {
-    updateBoard(bd);
+    updateBoard(sm, bd);
     copyArrays(bd);
     drawBoard(sm, bd);
 }
@@ -304,7 +332,7 @@ const animLoop = (sm, bd) =>
 {
     if (sm.isGameActive)
     {
-        boardInterval = setInterval(() => updateAndDraw(sm, bd), msWait);
+        boardInterval = setInterval(() => updateAndDraw(sm, bd), sm.msWait);
     }
     else
     {
@@ -318,11 +346,11 @@ const animLoop = (sm, bd) =>
  *****************************************************************************/
 const captureClick = (e, sm, bd) =>
 {
-    let canvasRect = sm.canvas.getBoundingClientRect();
+    let canvasRect = sm.gridcanvas.getBoundingClientRect();
     let x = e.clientX - canvasRect.left;
     let y = e.clientY - canvasRect.top;
-    let i = Math.floor(x / cellsize);
-    let j = Math.floor(y / cellsize);
+    let i = Math.floor(x / sm.cellSize);
+    let j = Math.floor(y / sm.cellSize);
     toggleCell(i, j, bd);
 
 }
@@ -337,11 +365,14 @@ const toggleCell = (x, y, bd) =>
     bd.changedBoardArray[x][y] = true;
 }
 
+/******************************************************************************
+ * Set changedArray to true to redraw whole board on next generation
+ *****************************************************************************/
 const redrawBoard = (sm, bd) =>
 {
-    for (let i = 0; i < rows; i++)
+    for (let i = 0; i < sm.cols; i++)
     {
-        for (let j = 0; j < cols; j++)
+        for (let j = 0; j < sm.rows; j++)
         {
             bd.changedBoardArray[i][j] = true;
         }
@@ -349,19 +380,23 @@ const redrawBoard = (sm, bd) =>
     drawBoard(sm, bd);
 }
 
+/******************************************************************************
+ * Draws the grid overlay
+ *****************************************************************************/
 const drawGrid = (sm) =>
 {
     sm.gridctx.clearRect(0, 0, canvasWidth, canvasHeight)
+    sm.gridctx.beginPath();
     if (sm.isGridActive)
     {
-        for (let i = 0; i < canvasWidth; i += cellsize)
+        for (let i = 0; i < canvasWidth; i += sm.cellSize)
         {
             sm.gridctx.moveTo(i, 0);
             sm.gridctx.lineTo(i, canvasHeight);
             sm.gridctx.stroke();
         }
 
-        for (let i = 0; i < canvasHeight; i += cellsize)
+        for (let i = 0; i < canvasHeight; i += sm.cellSize)
         {
             sm.gridctx.moveTo(0, i);
             sm.gridctx.lineTo(canvasWidth, i);
@@ -370,8 +405,110 @@ const drawGrid = (sm) =>
     }
 }
 
+/******************************************************************************
+ * Speedup Callback Function: increase speed factor
+ *****************************************************************************/
+const speedUp = (sm) =>
+{
+    sm.gps += 1;
+    if (sm.gps > maxGps)
+    {
+        sm.gps = maxGps;
+    }
+    sm.msWait = 1000 / sm.gps;
+}
+
+/******************************************************************************
+ * Speeddown Callback function: decrease speed factor
+ *****************************************************************************/
+const speedDown = (sm) =>
+{
+    sm.gps -= 1;
+    if (sm.gps < minGps)
+    {
+        sm.gps = minGps;
+    }
+    sm.msWait = 1000 / sm.gps;
+}
+
+/******************************************************************************
+ * Alter cell size: increase cell size
+ *****************************************************************************/
+const sizeUp = (sm, bd) =>
+{
+    switch (sm.cellSize)
+    {
+        case 5:
+            sm.cellSize = 10;
+            break;
+        case 10:
+            sm.cellSize = 20;
+            break;
+        case 20:
+            sm.cellSize = 40;
+            break;
+        case 40:
+            sm.cellSize = 40;
+            break;
+    }
+    sm.rows = canvasHeight / sm.cellSize;
+    sm.cols = canvasWidth / sm.cellSize;
+    clearCanvas(sm);
+    bd = new Boards(sm.rows, sm.cols);
+    redrawBoard(sm, bd);
+}
+
+/******************************************************************************
+ * Alter cell size: decrease cell size
+ *****************************************************************************/
+const sizeDown = (sm, bd) =>
+{
+    switch (sm.cellSize)
+    {
+        case 40:
+            sm.cellSize = 20;
+            break;
+        case 20:
+            sm.cellSize = 10;
+            break;
+        case 10:
+            sm.cellSize = 5;
+            break;
+        case 5:
+            sm.cellSize = 5;
+            break;
+    }
+    sm.rows = canvasHeight / sm.cellSize;
+    sm.cols = canvasWidth / sm.cellSize;
+    clearCanvas(sm);
+    bd = new Boards(sm.rows, sm.cols);
+    redrawBoard(sm, bd);
+}
+
+/******************************************************************************
+ * Toggle speed and size buttons on and off depending on whether or not 
+ * the simulation is running
+ *****************************************************************************/
+const toggleButtons = (sm) =>
+{
+    if (sm.isGameActive)
+    {
+        document.getElementById("speedupbutton").disabled = true;
+        document.getElementById("speeddownbutton").disabled = true;
+        document.getElementById("sizeupbutton").disabled = true;
+        document.getElementById("sizedownbutton").disabled = true;
+    }
+    else
+    {
+        document.getElementById("speedupbutton").disabled = false;
+        document.getElementById("speeddownbutton").disabled = false;
+        document.getElementById("sizeupbutton").disabled = false;
+        document.getElementById("sizedownbutton").disabled = false;
+    }
+}
+
 // Main code to run on load
 sm = new StateManager;
-bd = new Boards
-clearCanvas(sm, bd);
+bd = new Boards(sm.rows, sm.cols);
+redrawBoard(sm, bd);
 listeners(sm, bd);
