@@ -178,22 +178,21 @@ const listeners = (sm, bd) =>
  *****************************************************************************/
 const drawBoard = (sm, bd) =>
 {
+    sm.ctx.clearRect(0, 0, sm.canvasWidth, sm.canvasHeight);
     for (let i = 0; i < sm.cols; i++)
     {
         for (let j = 0; j < sm.rows; j++)
         {
-            if (bd.changedBoardArray[i][j])
+            if (bd.boardArray[i][j])
             {
-                if (bd.boardArray[i][j])
-                {
-                    sm.ctx.fillStyle = sm.liveColor;
-                }
-                else
-                {
-                    sm.ctx.fillStyle = sm.deadColor;
-                }
-                sm.ctx.fillRect(i * sm.cellSize, j * sm.cellSize, sm.cellSize, sm.cellSize);
+                sm.ctx.fillStyle = sm.liveColor;
             }
+            else
+            {
+                sm.ctx.fillStyle = sm.deadColor;
+            }
+            sm.ctx.fillRect(i * sm.cellSize, j * sm.cellSize, sm.cellSize, sm.cellSize);
+            
         }
     }
 }
@@ -428,22 +427,24 @@ const redrawBoard = (sm, bd) =>
 const drawGrid = (sm) =>
 {
     sm.ctx.beginPath();
-    if (sm.isGridActive)
-    {
-        for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
-        {
-            sm.ctx.moveTo(i, 0);
-            sm.ctx.lineTo(i, sm.canvasHeight);
-            sm.ctx.stroke();
-        }
+    sm.ctx.strokeStyle = (sm.isGridActive ? "Black" : sm.deadColor);
 
-        for (let i = 0; i < sm.canvasHeight; i += sm.cellSize)
-        {
-            sm.ctx.moveTo(0, i);
-            sm.ctx.lineTo(sm.canvasWidth, i);
-            sm.ctx.stroke();
-        }
+    for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
+    {
+        sm.ctx.beginPath();
+        sm.ctx.moveTo(i, 0);
+        sm.ctx.lineTo(i, sm.canvasHeight);
+        sm.ctx.stroke();
     }
+
+    for (let i = 0; i < sm.canvasHeight; i += sm.cellSize)
+    {
+        sm.ctx.beginPath();
+        sm.ctx.moveTo(0, i);
+        sm.ctx.lineTo(sm.canvasWidth, i);
+        sm.ctx.stroke();
+    }
+
 }
 
 /******************************************************************************
