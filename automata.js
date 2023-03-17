@@ -109,6 +109,7 @@ const listeners = (sm, bd) =>
         {
             captureClick(e, sm, bd);
             drawBoard(sm, bd);
+            drawGrid(sm, bd);
         }
     });
 
