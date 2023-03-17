@@ -17,8 +17,6 @@ class StateManager
     deadColor;
     canvas;
     ctx;
-    gridcanvas;
-    gridctx;
     gps;
     msWait;
     cellSize;
@@ -29,8 +27,6 @@ class StateManager
     {
         this.canvas = document.getElementById("cellboardcanvas");
         this.ctx = this.canvas.getContext("2d");
-        this.gridcanvas = document.getElementById("gridboardcanvas");
-        this.gridctx = this.gridcanvas.getContext("2d");
         this.liveColor = "AntiqueWhite";
         this.deadColor = "DarkGreen";
         this.isGameActive = false;
@@ -100,7 +96,7 @@ const listeners = (sm, bd) =>
         drawBoard(sm, bd);
     });
 
-    document.getElementById("gridboardcanvas").addEventListener("mousedown", function (e)
+    document.getElementById("cellboardcanvas").addEventListener("mousedown", function (e)
     {
         if (!sm.isGameActive)
         {
@@ -346,6 +342,7 @@ const updateAndDraw = (sm, bd) =>
     updateBoard(sm, bd);
     copyArrays(bd);
     drawBoard(sm, bd);
+    drawGrid(sm, bd);
 }
 
 /******************************************************************************
@@ -369,7 +366,7 @@ const animLoop = (sm, bd) =>
  *****************************************************************************/
 const captureClick = (e, sm, bd) =>
 {
-    let canvasRect = sm.gridcanvas.getBoundingClientRect();
+    let canvasRect = sm.canvas.getBoundingClientRect();
     let x = e.clientX - canvasRect.left;
     let y = e.clientY - canvasRect.top;
     let i = Math.floor(x / sm.cellSize);
@@ -403,26 +400,25 @@ const redrawBoard = (sm, bd) =>
 }
 
 /******************************************************************************
- * Draws the grid overlay
+ * Draws the grid overlay if active
  *****************************************************************************/
 const drawGrid = (sm) =>
 {
-    sm.gridctx.clearRect(0, 0, canvasWidth, canvasHeight)
-    sm.gridctx.beginPath();
+    sm.ctx.beginPath();
     if (sm.isGridActive)
     {
         for (let i = 0; i < canvasWidth; i += sm.cellSize)
         {
-            sm.gridctx.moveTo(i, 0);
-            sm.gridctx.lineTo(i, canvasHeight);
-            sm.gridctx.stroke();
+            sm.ctx.moveTo(i, 0);
+            sm.ctx.lineTo(i, canvasHeight);
+            sm.ctx.stroke();
         }
 
         for (let i = 0; i < canvasHeight; i += sm.cellSize)
         {
-            sm.gridctx.moveTo(0, i);
-            sm.gridctx.lineTo(canvasWidth, i);
-            sm.gridctx.stroke();
+            sm.ctx.moveTo(0, i);
+            sm.ctx.lineTo(canvasWidth, i);
+            sm.ctx.stroke();
         }
     }
 }
