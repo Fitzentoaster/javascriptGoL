@@ -93,6 +93,13 @@ const listeners = (sm, bd) =>
         drawBoard(sm, bd);
     });
 
+    document.getElementById("clearbutton").addEventListener("click", function ()
+    {
+        clearBoard(sm, bd);
+        clearCanvas(sm);
+        drawBoard(sm, bd);
+    });
+
     document.getElementById("gridboardcanvas").addEventListener("mousedown", function (e)
     {
         if (!sm.isGameActive)
@@ -178,6 +185,22 @@ const drawBoard = (sm, bd) =>
 const clearCanvas = (sm) =>
 {
     sm.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+}
+
+/******************************************************************************
+ * Clears the board state
+ *****************************************************************************/
+const clearBoard = (sm, bd) =>
+{
+    for (let i = 0; i < sm.cols; i++)
+    {
+        for (let j = 0; j < sm.rows; j++)
+        {
+            bd.boardArray[i][j] = false;
+            bd.oldBoardArray[i][j] = false;
+            bd.changedBoardArray[i][j] = true;
+        }
+    }
 }
 
 /******************************************************************************
@@ -352,7 +375,6 @@ const captureClick = (e, sm, bd) =>
     let i = Math.floor(x / sm.cellSize);
     let j = Math.floor(y / sm.cellSize);
     toggleCell(i, j, bd);
-
 }
 
 /******************************************************************************
@@ -454,7 +476,7 @@ const sizeUp = (sm, bd) =>
     sm.rows = canvasHeight / sm.cellSize;
     sm.cols = canvasWidth / sm.cellSize;
     clearCanvas(sm);
-    bd = new Boards(sm.rows, sm.cols);
+    clearBoard(sm, bd);
     redrawBoard(sm, bd);
 }
 
@@ -481,7 +503,7 @@ const sizeDown = (sm, bd) =>
     sm.rows = canvasHeight / sm.cellSize;
     sm.cols = canvasWidth / sm.cellSize;
     clearCanvas(sm);
-    bd = new Boards(sm.rows, sm.cols);
+    clearBoard(sm, bd);
     redrawBoard(sm, bd);
 }
 
@@ -497,6 +519,7 @@ const toggleButtons = (sm) =>
         document.getElementById("speeddownbutton").disabled = true;
         document.getElementById("sizeupbutton").disabled = true;
         document.getElementById("sizedownbutton").disabled = true;
+        document.getElementById("clearbutton").disabled = true;
     }
     else
     {
@@ -504,6 +527,7 @@ const toggleButtons = (sm) =>
         document.getElementById("speeddownbutton").disabled = false;
         document.getElementById("sizeupbutton").disabled = false;
         document.getElementById("sizedownbutton").disabled = false;
+        document.getElementById("clearbutton").disabled = false;
     }
 }
 
