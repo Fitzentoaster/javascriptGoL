@@ -7,11 +7,15 @@ as a method to help me learn the syntax and get used to stuff. So far it just ra
 the board and applies the rules to generate an animation that can be stopped/started
 at will. 
 
-# To Do
-I want to work with mouseclick events to let you draw initial states/edit the current state,
-as well as alter the speed of animation and colors and other fun stuff. 
-I also want to improve the algorithm performance: both the behind-the-scenes counting
-algo and the drawing algo are very naive and can be improved.. but
+# Since the initial commit:
+I've added many features: dynamic resizing of the canvas is based on the device/window size. Cells can be 
+resized to 4 different values, the speed (in generations/per second) can be altered, the colors
+can be selected, and you can click on cells individually to turn them on/off to design your own 
+starting patterns.
 
-As of this writing (3/7/2023) the program is brand new.
+# To Do
+Improve the actual algorithms to be less naive and perform faster, though they perform significantly fast enough 
+to get the job done at the current level.
+
+As of this writing (3/17/2023) the program is about a week old.
 
