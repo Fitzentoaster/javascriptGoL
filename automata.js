@@ -430,20 +430,26 @@ const drawGrid = (sm) =>
     sm.ctx.beginPath();
     sm.ctx.strokeStyle = (sm.isGridActive ? "Black" : sm.deadColor);
 
-    for (let i = 0; i < sm.canvasWidth - sm.cellSize; i += sm.cellSize)
+    for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
     {
-        sm.ctx.beginPath();
-        sm.ctx.moveTo(i, 0);
-        sm.ctx.lineTo(i, sm.canvasHeight);
-        sm.ctx.stroke();
+        if (i < sm.canvasWidth)
+        {
+            sm.ctx.beginPath();
+            sm.ctx.moveTo(i, 0);
+            sm.ctx.lineTo(i, sm.canvasHeight);
+            sm.ctx.stroke();
+        }
     }
 
-    for (let i = 0; i < sm.canvasHeight - sm.cellSize; i += sm.cellSize)
+    for (let i = 0; i < sm.canvasHeight; i += sm.cellSize)
     {
-        sm.ctx.beginPath();
-        sm.ctx.moveTo(0, i);
-        sm.ctx.lineTo(sm.canvasWidth, i);
-        sm.ctx.stroke();
+        if (i < sm.canvasHeight)
+        {
+            sm.ctx.beginPath();
+            sm.ctx.moveTo(0, i);
+            sm.ctx.lineTo(sm.canvasWidth, i);
+            sm.ctx.stroke();
+        }
     }
 
 }
@@ -556,6 +562,9 @@ const toggleButtons = (sm) =>
     }
 }
 
+/******************************************************************************
+ * Resize the canvas element to the new dimensions in the StateManager
+ *****************************************************************************/
 const resizeCanvas = (sm) =>
 {
     document.getElementById("cellboardcanvas").width = sm.canvasWidth;
