@@ -12,14 +12,14 @@
   </head>
   
   <body>
-    <h2>Game of Life</h2>
+    <h3>Game of Life</h3>
 
     <div id="container">
 
       <div id="grid">
         <div id="toprowbuttons">
           <div class="tooltip">
-            <button id="randomizebutton" type="button">Random</button>
+            <button id="randomizebutton" type="button">Rand</button>
             <span class="tooltiptext">Randomize the Board</span>
           </div>
           <div class="tooltip">
@@ -35,29 +35,6 @@
             <span class="tooltiptext">Clear the Board</span>
           </div>
         </div>
-          <div id="colorbuttons">
-            <label for="deadcolorselect">Dead:</label>
-            <select id="deadcolorselect">
-              <option value="Black">Black</option>
-              <option value="DarkBlue">Blue</option>
-              <option value="DarkGreen" selected>Green</option>
-              <option value="DarkRed">Red</option>
-              <option value="DarkSlateGrey">Slate</option>
-            </select>
-
-            <label for="livecolorselect">Live:</label>
-            <select id="livecolorselect">
-              <option value="White">White</option>
-              <option value="Chartreuse">Chartreuse</option>
-              <option value="Cornsilk">Cornsilk</option>
-              <option value="Gold">Gold</option>
-              <option value="LawnGreen">Green</option>
-              <option value="LightPink">Pink</option>
-              <option value="Magenta">Magenta</option>
-              <option value="Red">Red</option>
-              <option value="Yellow">Yellow</option>
-            </select>
-          </div>
 
         <div id="speedbuttons">
           <div class="tooltip">
@@ -88,6 +65,30 @@
             <span class="tooltiptext">Current size of the cells in Pixels</span>
           </div>
         </div>
+        <div id="colorbuttons">
+          <label for="deadcolorselect">Dead:</label>
+          <select id="deadcolorselect">
+            <option value="Black">Black</option>
+            <option value="DarkBlue">Blue</option>
+            <option value="DarkGreen" selected>Green</option>
+            <option value="DarkRed">Red</option>
+            <option value="DarkSlateGrey">Slate</option>
+          </select>
+
+          <label for="livecolorselect">Live:</label>
+          <select id="livecolorselect">
+            <option value="White">White</option>
+            <option value="Chartreuse">Chartreuse</option>
+            <option value="Cornsilk">Cornsilk</option>
+            <option value="Gold">Gold</option>
+            <option value="LawnGreen">Green</option>
+            <option value="LightPink">Pink</option>
+            <option value="Magenta">Magenta</option>
+            <option value="Red">Red</option>
+            <option value="Yellow">Yellow</option>
+          </select>
+        </div>
+
       </div>
     </div>
     <br>
