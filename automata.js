@@ -36,11 +36,11 @@ class StateManager
         this.canvasWidth = document.documentElement.clientWidth;
         this.canvasWidth = this.canvasWidth / this.cellSize;
         this.canvasWidth = Math.floor(this.canvasWidth) * this.cellSize;
-        this.canvasWidth -= 50;
+        this.canvasWidth -= 80;
         this.canvasHeight = document.documentElement.clientHeight;
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
-        this.canvasHeight -= 200;
+        this.canvasHeight -= 220;
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
     }
@@ -161,8 +161,8 @@ const listeners = (sm, bd) =>
     {
         sm.canvasWidth = document.documentElement.clientWidth;
         sm.canvasWidth = sm.canvasWidth / sm.cellSize;
-        sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - 50;
-        sm.canvasHeight = document.documentElement.clientHeight - 200;
+        sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - 80;
+        sm.canvasHeight = document.documentElement.clientHeight - 220;
         sm.canvasHeight = sm.canvasHeight / sm.cellSize;
         sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
         sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
@@ -430,7 +430,7 @@ const drawGrid = (sm) =>
     sm.ctx.beginPath();
     sm.ctx.strokeStyle = (sm.isGridActive ? "Black" : sm.deadColor);
 
-    for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
+    for (let i = 0; i < sm.canvasWidth - sm.cellSize; i += sm.cellSize)
     {
         sm.ctx.beginPath();
         sm.ctx.moveTo(i, 0);
@@ -438,7 +438,7 @@ const drawGrid = (sm) =>
         sm.ctx.stroke();
     }
 
-    for (let i = 0; i < sm.canvasHeight; i += sm.cellSize)
+    for (let i = 0; i < sm.canvasHeight - sm.cellSize; i += sm.cellSize)
     {
         sm.ctx.beginPath();
         sm.ctx.moveTo(0, i);
@@ -498,6 +498,7 @@ const sizeUp = (sm, bd) =>
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
     clearCanvas(sm);
+    bd = new Boards(sm.rows, sm.cols);
     clearBoard(sm, bd);
     redrawBoard(sm, bd);
 }
@@ -526,6 +527,7 @@ const sizeDown = (sm, bd) =>
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
     clearCanvas(sm);
+    bd = new Boards(sm.rows, sm.cols);
     clearBoard(sm, bd);
     redrawBoard(sm, bd);
 }

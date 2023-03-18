@@ -6,4 +6,67 @@ body
     font-size: 1rem;
     color: antiquewhite;
     text-align: center;
+
+}
+
+#container
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#grid
+{
+    width: 400px;
+    display: grid;
+    grid-template-rows: 30px 30px 30px 30px;
+
+}
+
+#toprowbuttons
+{
+    display: flex;
+    justify-content: space-evenly;
+    margin: auto;
+    grid-row: 1 / 1;
+    grid-column: 1 / 4;
+}
+
+#colorbuttons
+{
+    display: flex;
+    margin: auto;
+    justify-content: space-evenly;
+    align-items: center;
+    grid-row: 2 / 2;
+    grid-column: 1 / 4;
+}
+
+#speedbuttons
+{
+    display: flex;
+    justify-content: space-evenly;
+    margin: auto;
+    grid-row: 3 / 3;
+    grid-column: 1 / 4;
+}
+
+#sizebuttons
+{
+    display: flex;
+    justify-content: space-evenly;
+    margin: auto;
+    grid-row: 4 / 4;
+    grid-column: 1 / 4;
+}
+
+#sizevalue
+{
+    grid-column-end: auto;
+}
+
+#gpsvalue
+{
+    grid-column: auto;
 }
