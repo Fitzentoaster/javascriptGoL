@@ -1,6 +1,10 @@
 # javascriptGoL
 Simple Game of Life from a new Javascript learner
 
+# To Use
+Download the source and run index.html in your browser, or just head over to
+https://jolly-tiramisu-010776.netlify.app/ for a deployed version.
+
 # So Far
 I'm new to Javascript, and I always draw up a 'game of life' in new languages/paradigms
 as a method to help me learn the syntax and get used to stuff. So far it just randomizes
