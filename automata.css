@@ -6,7 +6,7 @@ body
     font-size: 1rem;
     color: antiquewhite;
     text-align: center;
-
+    overflow: hidden;
 }
 
 #container
@@ -14,24 +14,28 @@ body
     display: flex;
     align-items: center;
     justify-content: space-around;
+
 }
 
 #grid
 {
-    width: 400px;
+    width: 320px;
     display: grid;
     grid-gap: 5px;
+    margin: 0px;
 }
 
-.tooltip {
+.tooltip 
+{
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted black;
+  overflow: hidden;
 }
 
-.tooltip .tooltiptext {
+.tooltip .tooltiptext 
+{
   visibility: hidden;
-  width: 120px;
+  width: 150px;
   background-color: darkolivegreen;
   color: antiquewhite;
   text-align: center;
@@ -44,17 +48,11 @@ body
   transition: opacity 0.3s;
 }
 
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 0.9;
+@media only screen and (min-width:1024px)
+{
+    .tooltip:hover .tooltiptext 
+    {
+    visibility: visible;
+    opacity: 0.9;
+    }
 }

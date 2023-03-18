@@ -40,7 +40,7 @@ class StateManager
         this.canvasHeight = document.documentElement.clientHeight;
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
-        this.canvasHeight -= 220;
+        this.canvasHeight -= 230;
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
     }
@@ -159,19 +159,27 @@ const listeners = (sm, bd) =>
 
     window.addEventListener("resize", function () 
     {
-        sm.canvasWidth = document.documentElement.clientWidth;
-        sm.canvasWidth = sm.canvasWidth / sm.cellSize;
-        sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - 80;
-        sm.canvasHeight = document.documentElement.clientHeight - 220;
-        sm.canvasHeight = sm.canvasHeight / sm.cellSize;
-        sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
-        sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
-        sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
+        reCalcDimens(sm);
         resizeCanvas(sm);
         bd = new Boards(sm.rows, sm.cols);
         clearBoard(sm, bd);
         redrawBoard(sm, bd);
     });
+}
+
+/******************************************************************************
+ * Recalculate the dimensions stored in the state manager
+ *****************************************************************************/
+const reCalcDimens = (sm) =>
+{
+    sm.canvasWidth = document.documentElement.clientWidth;
+    sm.canvasWidth = sm.canvasWidth / sm.cellSize;
+    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - 80;
+    sm.canvasHeight = document.documentElement.clientHeight - 230;
+    sm.canvasHeight = sm.canvasHeight / sm.cellSize;
+    sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
+    sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
+    sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
 }
 
 /******************************************************************************
