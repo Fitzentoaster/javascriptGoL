@@ -41,6 +41,7 @@ class StateManager
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
         this.canvasHeight -= 230;
+        this.canvasHeight = this.canvasHeight < 200 ? 200 : this.canvasHeight;
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
     }
@@ -178,6 +179,7 @@ const reCalcDimens = (sm) =>
     sm.canvasHeight = document.documentElement.clientHeight - 230;
     sm.canvasHeight = sm.canvasHeight / sm.cellSize;
     sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
+    sm.canvasHeight = sm.canvasHeight < 200 ? 200 : sm.canvasHeight;
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
 }
@@ -438,6 +440,7 @@ const drawGrid = (sm) =>
     sm.ctx.beginPath();
     sm.ctx.strokeStyle = (sm.isGridActive ? "Black" : sm.deadColor);
 
+    //Draw Vertical Lines
     for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
     {
         if (i < sm.canvasWidth)
@@ -449,6 +452,7 @@ const drawGrid = (sm) =>
         }
     }
 
+    //Draw Horizontal Lines
     for (let i = 0; i < sm.canvasHeight; i += sm.cellSize)
     {
         if (i < sm.canvasHeight)
@@ -459,7 +463,6 @@ const drawGrid = (sm) =>
             sm.ctx.stroke();
         }
     }
-
 }
 
 /******************************************************************************
@@ -502,12 +505,11 @@ const sizeUp = (sm, bd) =>
             sm.cellSize = 20;
             break;
         case 20:
-            sm.cellSize = 40;
-            break;
         case 40:
             sm.cellSize = 40;
             break;
     }
+
     resizeCanvas(sm);
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
@@ -531,12 +533,11 @@ const sizeDown = (sm, bd) =>
             sm.cellSize = 10;
             break;
         case 10:
-            sm.cellSize = 5;
-            break;
         case 5:
             sm.cellSize = 5;
             break;
     }
+
     resizeCanvas(sm);
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
@@ -579,9 +580,16 @@ const resizeCanvas = (sm) =>
     document.getElementById("cellboardcanvas").height = sm.canvasHeight;
 }
 
-// Main code to run on load
-sm = new StateManager;
-resizeCanvas(sm);
-bd = new Boards(sm.rows, sm.cols);
-redrawBoard(sm, bd);
-listeners(sm, bd);
+/******************************************************************************
+ * Main code to run on page load
+ *****************************************************************************/
+const main = () =>
+{
+    sm = new StateManager;
+    resizeCanvas(sm);
+    bd = new Boards(sm.rows, sm.cols);
+    redrawBoard(sm, bd);
+    listeners(sm, bd);
+}
+
+main();

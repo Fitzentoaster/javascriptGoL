@@ -32,20 +32,10 @@ h3
 
 #sizevalue, #gpsvalue
 {
-    width: 140px;
+    width: 130px;
 }
 
-#speedupbutton, #speeddownbutton
-{
-    width: 60px;
-}
-
-#sizeupbutton, #sizedownbutton
-{
-    width: 60px;
-}
-
-#randomizebutton, #togglestatebutton, #clearbutton, #togglegridbutton
+.button
 {
     width: 60px;
 }
@@ -59,34 +49,52 @@ h3
     justify-content: space-around;
 }
 
-.tooltip 
+@media only screen and (max-width:1024px)
 {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
-
-.tooltip .tooltiptext 
-{
-  visibility: hidden;
-  width: 150px;
-  background-color: darkolivegreen;
-  color: antiquewhite;
-  text-align: center;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -60px;
-  opacity: 0;
-  transition: opacity 0.3s;
+    .tooltip 
+    {
+        display: inline-block;
+    }
+    
+    .tooltip .tooltiptext
+    {
+        visibility: hidden;
+        position: absolute;
+        opacity: 0;
+        overflow: hidden;
+    }
 }
 
 @media only screen and (min-width:1024px)
 {
-    .tooltip:hover .tooltiptext 
+    .tooltip 
     {
-    visibility: visible;
-    opacity: 0.9;
+        position: relative;
+        display: inline-block;
+    }
+
+    .tooltip .tooltiptext 
+    {
+        visibility: hidden;
+        width: 150px;
+        background-color: darkolivegreen;
+        color: antiquewhite;
+        text-align: center;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    @media only screen and (min-width:1024px)
+    {
+        .tooltip:hover .tooltiptext 
+        {
+        visibility: visible;
+        opacity: 0.9;
+        }
     }
 }
