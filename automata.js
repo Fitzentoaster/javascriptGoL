@@ -2,6 +2,13 @@
 const randomFactor = 8;
 const maxGps = 25;
 const minGps = 1;
+const cellSizeSmall = 5;
+const cellSizeMed = 10;
+const cellSizeLg = 20;
+const cellSizeXL = 40;
+const minCanvasHeight = 200;
+const canvasHeightModifier = 230;
+const canvasWidthModifier = 80;
 
 /******************************************************************************
  * State Manager Class: has drawing variables and gamestate boolean
@@ -12,6 +19,7 @@ class StateManager
     isGridActive;
     liveColor;
     deadColor;
+    gridColor;
     canvas;
     ctx;
     gps;
@@ -26,8 +34,9 @@ class StateManager
     {
         this.canvas = document.getElementById("cellboardcanvas");
         this.ctx = this.canvas.getContext("2d");
-        this.liveColor = "AntiqueWhite";
+        this.liveColor = "SandyBrown";
         this.deadColor = "DarkGreen";
+        this.gridColor = "Black";
         this.isGameActive = false;
         this.isGridActive = false;
         this.msWait = 100;
@@ -36,12 +45,12 @@ class StateManager
         this.canvasWidth = document.documentElement.clientWidth;
         this.canvasWidth = this.canvasWidth / this.cellSize;
         this.canvasWidth = Math.floor(this.canvasWidth) * this.cellSize;
-        this.canvasWidth -= 80;
+        this.canvasWidth -= canvasWidthModifier;
         this.canvasHeight = document.documentElement.clientHeight;
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
-        this.canvasHeight -= 230;
-        this.canvasHeight = this.canvasHeight < 200 ? 200 : this.canvasHeight;
+        this.canvasHeight -= canvasHeightModifier;
+        this.canvasHeight = this.canvasHeight < minCanvasHeight ? minCanvasHeight : this.canvasHeight;
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
     }
@@ -95,6 +104,7 @@ const listeners = (sm, bd) =>
         randomizeBoard(sm, bd);
         clearCanvas(sm);
         drawBoard(sm, bd);
+        drawGrid(sm, bd);
     });
 
     document.getElementById("clearbutton").addEventListener("click", function ()
@@ -118,12 +128,14 @@ const listeners = (sm, bd) =>
     {
         sm.liveColor = document.getElementById("livecolorselect").value;
         redrawBoard(sm, bd);
+        drawGrid(sm, bd);
     });
 
     document.getElementById("deadcolorselect").addEventListener("change", function ()
     {
         sm.deadColor = document.getElementById("deadcolorselect").value;
         redrawBoard(sm, bd);
+        drawGrid(sm, bd);
     });
 
     document.getElementById("togglegridbutton").addEventListener("click", function ()
@@ -175,8 +187,8 @@ const reCalcDimens = (sm) =>
 {
     sm.canvasWidth = document.documentElement.clientWidth;
     sm.canvasWidth = sm.canvasWidth / sm.cellSize;
-    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - 80;
-    sm.canvasHeight = document.documentElement.clientHeight - 230;
+    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - canvasWidthModifier;
+    sm.canvasHeight = document.documentElement.clientHeight - canvasHeightModifier;
     sm.canvasHeight = sm.canvasHeight / sm.cellSize;
     sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
     sm.canvasHeight = sm.canvasHeight < 200 ? 200 : sm.canvasHeight;
@@ -438,7 +450,7 @@ const redrawBoard = (sm, bd) =>
 const drawGrid = (sm) =>
 {
     sm.ctx.beginPath();
-    sm.ctx.strokeStyle = (sm.isGridActive ? "Black" : sm.deadColor);
+    sm.ctx.strokeStyle = (sm.isGridActive ? sm.gridColor : sm.deadColor);
 
     //Draw Vertical Lines
     for (let i = 0; i < sm.canvasWidth; i += sm.cellSize)
@@ -498,15 +510,15 @@ const sizeUp = (sm, bd) =>
 {
     switch (sm.cellSize)
     {
-        case 5:
-            sm.cellSize = 10;
+        case cellSizeSmall:
+            sm.cellSize = cellSizeMed;
             break;
-        case 10:
-            sm.cellSize = 20;
+        case cellSizeMed:
+            sm.cellSize = cellSizeLg;
             break;
-        case 20:
-        case 40:
-            sm.cellSize = 40;
+        case cellSizeLg:
+        case cellSizeXL:
+            sm.cellSize = cellSizeXL;
             break;
     }
 
@@ -526,15 +538,15 @@ const sizeDown = (sm, bd) =>
 {
     switch (sm.cellSize)
     {
-        case 40:
-            sm.cellSize = 20;
+        case cellSizeXL:
+            sm.cellSize = cellSizeLg;
             break;
-        case 20:
-            sm.cellSize = 10;
+        case cellSizeLg:
+            sm.cellSize = cellSizeMed;
             break;
-        case 10:
-        case 5:
-            sm.cellSize = 5;
+        case cellSizeMed:
+        case cellSizeSmall:
+            sm.cellSize = cellSizeSmall;
             break;
     }
 
