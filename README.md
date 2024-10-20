@@ -21,5 +21,3 @@ starting patterns.
 Improve the actual algorithms to be less naive and perform faster, though they perform significantly fast enough 
 to get the job done at the current level.
 
-As of this writing (3/17/2023) the program is about a week old.
-
