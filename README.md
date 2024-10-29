@@ -2,7 +2,7 @@
 Simple Game of Life implementation
 
 # To Use
-Download the source and run index.html in your browser.
+Download the source and run index.html in your browser, or check out the deployed version at Netlify [here](https://javascript-gol.netlify.app/)
 
 # So Far
 When I started this project I was refreshing in Javascript after not using it for a few years
