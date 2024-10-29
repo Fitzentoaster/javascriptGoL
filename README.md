@@ -2,8 +2,7 @@
 Simple Game of Life from a new Javascript learner
 
 # To Use
-Download the source and run index.html in your browser, or just head over to
-https://jolly-tiramisu-010776.netlify.app/ for a deployed version.
+Download the source and run index.html in your browser.
 
 # So Far
 I'm new to Javascript, and I always draw up a 'game of life' in new languages/paradigms
