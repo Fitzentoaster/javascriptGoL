@@ -1,18 +1,18 @@
 //Global Constants
-const randomFactor = 8;
-const maxGps = 20;
-const minGps = 2;
-const defaultGps = 10;
-const cellSizeSmall = 5;
-const cellSizeMed = 10;
-const cellSizeLg = 20;
-const cellSizeXL = 40;
-const minCanvasHeight = 200;
-const maxCanvasHeight = 600;
-const maxCanvasWidth = 800;
-const canvasHeightModifier = 230;
-const canvasWidthModifier = 80;
-const speedStep = 2;
+const RANDOM_FACTOR = 8;
+const MAX_GPS = 20;
+const MIN_GPS = 2;
+const DEFAULT_GPS = 10;
+const CELL_SIZE_SM = 5;
+const CELL_SIZE_MD = 10;
+const CELL_SIZE_LG = 20;
+const CELL_SIZE_XL = 40;
+const MIN_CANVAS_HEIGHT = 200;
+const MAX_CANVAS_HEIGHT = 600;
+const MAX_CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT_MODIFIER = 230;
+const CANVAS_WIDTH_MODIFIER = 80;
+const SPEED_STEP = 2;
 
 /******************************************************************************
  * State Manager Class: has drawing variables and gamestate boolean
@@ -43,20 +43,20 @@ class StateManager
         this.gridColor = "Black";
         this.isGameActive = false;
         this.isGridActive = false;
-        this.gps = defaultGps;
+        this.gps = DEFAULT_GPS;
         this.msWait = 1000 / this.gps;
-        this.cellSize = cellSizeSmall;
+        this.cellSize = CELL_SIZE_SM;
 
-        this.canvasWidth = (document.documentElement.clientWidth > maxCanvasWidth) ? maxCanvasWidth : document.documentElement.clientWidth;
+        this.canvasWidth = (document.documentElement.clientWidth > MAX_CANVAS_WIDTH) ? MAX_CANVAS_WIDTH : document.documentElement.clientWidth;
         this.canvasWidth = this.canvasWidth / this.cellSize;
         this.canvasWidth = Math.floor(this.canvasWidth) * this.cellSize;
-        this.canvasWidth -= canvasWidthModifier;
+        this.canvasWidth -= CANVAS_WIDTH_MODIFIER;
 
-        this.canvasHeight = (document.documentElement.clientHeight > maxCanvasHeight) ? maxCanvasHeight : document.documentElement.clientHeight;
+        this.canvasHeight = (document.documentElement.clientHeight > MAX_CANVAS_HEIGHT) ? MAX_CANVAS_HEIGHT : document.documentElement.clientHeight;
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
-        this.canvasHeight -= canvasHeightModifier;
-        this.canvasHeight = this.canvasHeight < minCanvasHeight ? minCanvasHeight : this.canvasHeight;
+        this.canvasHeight -= CANVAS_HEIGHT_MODIFIER;
+        this.canvasHeight = this.canvasHeight < MIN_CANVAS_HEIGHT ? MIN_CANVAS_HEIGHT : this.canvasHeight;
 
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
@@ -192,14 +192,14 @@ const listeners = (sm, bd) =>
  *****************************************************************************/
 const reCalcDimens = (sm) =>
 {
-    sm.canvasWidth = (document.documentElement.clientWidth > maxCanvasWidth) ? maxCanvasWidth : document.documentElement.clientWidth;
+    sm.canvasWidth = (document.documentElement.clientWidth > MAX_CANVAS_WIDTH) ? MAX_CANVAS_WIDTH : document.documentElement.clientWidth;
     sm.canvasWidth = sm.canvasWidth / sm.cellSize;
-    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - canvasWidthModifier;
+    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - CANVAS_WIDTH_MODIFIER;
 
-    sm.canvasHeight = (document.documentElement.clientHeight > maxCanvasHeight) ? maxCanvasHeight : document.documentElement.clientHeight;
+    sm.canvasHeight = (document.documentElement.clientHeight > MAX_CANVAS_HEIGHT) ? MAX_CANVAS_HEIGHT : document.documentElement.clientHeight;
     sm.canvasHeight = sm.canvasHeight / sm.cellSize;
     sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
-    sm.canvasHeight = sm.canvasHeight < minCanvasHeight ? minCanvasHeight : sm.canvasHeight;
+    sm.canvasHeight = sm.canvasHeight < MIN_CANVAS_HEIGHT ? MIN_CANVAS_HEIGHT : sm.canvasHeight;
 
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
@@ -381,7 +381,7 @@ const randomizeBoard = (sm, bd) =>
     {
         for (let j = 0; j < sm.rows; j++)
         {
-            bd.boardArray[i][j] = (Math.floor(Math.random() * randomFactor) === 1 ? true: false);
+            bd.boardArray[i][j] = (Math.floor(Math.random() * RANDOM_FACTOR) === 1 ? true: false);
             bd.changedBoardArray[i][j] = true;
         }
     }
@@ -491,10 +491,10 @@ const drawGrid = (sm) =>
  *****************************************************************************/
 const speedUp = (sm) =>
 {
-    sm.gps += speedStep;
-    if (sm.gps > maxGps)
+    sm.gps += SPEED_STEP;
+    if (sm.gps > MAX_GPS)
     {
-        sm.gps = maxGps;
+        sm.gps = MAX_GPS;
     }
     sm.msWait = 1000 / sm.gps;
 }
@@ -504,10 +504,10 @@ const speedUp = (sm) =>
  *****************************************************************************/
 const speedDown = (sm) =>
 {
-    sm.gps -= speedStep;
-    if (sm.gps < minGps)
+    sm.gps -= SPEED_STEP;
+    if (sm.gps < MIN_GPS)
     {
-        sm.gps = minGps;
+        sm.gps = MIN_GPS;
     }
     sm.msWait = 1000 / sm.gps;
 }
@@ -519,15 +519,15 @@ const sizeUp = (sm, bd) =>
 {
     switch (sm.cellSize)
     {
-        case cellSizeSmall:
-            sm.cellSize = cellSizeMed;
+        case CELL_SIZE_SM:
+            sm.cellSize = CELL_SIZE_MD;
             break;
-        case cellSizeMed:
-            sm.cellSize = cellSizeLg;
+        case CELL_SIZE_MD:
+            sm.cellSize = CELL_SIZE_LG;
             break;
-        case cellSizeLg:
-        case cellSizeXL:
-            sm.cellSize = cellSizeXL;
+        case CELL_SIZE_LG:
+        case CELL_SIZE_XL:
+            sm.cellSize = CELL_SIZE_XL;
             break;
     }
 
@@ -548,15 +548,15 @@ const sizeDown = (sm, bd) =>
 {
     switch (sm.cellSize)
     {
-        case cellSizeXL:
-            sm.cellSize = cellSizeLg;
+        case CELL_SIZE_XL:
+            sm.cellSize = CELL_SIZE_LG;
             break;
-        case cellSizeLg:
-            sm.cellSize = cellSizeMed;
+        case CELL_SIZE_LG:
+            sm.cellSize = CELL_SIZE_MD;
             break;
-        case cellSizeMed:
-        case cellSizeSmall:
-            sm.cellSize = cellSizeSmall;
+        case CELL_SIZE_MD:
+        case CELL_SIZE_SM:
+            sm.cellSize = CELL_SIZE_SM;
             break;
     }
     reCalcDimens(sm);
