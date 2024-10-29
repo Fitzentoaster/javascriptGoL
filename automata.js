@@ -2,12 +2,13 @@
 const randomFactor = 8;
 const maxGps = 20;
 const minGps = 2;
+const defaultGps = 10;
 const cellSizeSmall = 5;
 const cellSizeMed = 10;
 const cellSizeLg = 20;
 const cellSizeXL = 40;
 const minCanvasHeight = 200;
-const maxCanvasHeight = 800;
+const maxCanvasHeight = 600;
 const maxCanvasWidth = 800;
 const canvasHeightModifier = 230;
 const canvasWidthModifier = 80;
@@ -42,21 +43,21 @@ class StateManager
         this.gridColor = "Black";
         this.isGameActive = false;
         this.isGridActive = false;
-        this.msWait = 100;
-        this.gps = 10;
-        this.cellSize = 5;
+        this.gps = defaultGps;
+        this.msWait = 1000 / this.gps;
+        this.cellSize = cellSizeSmall;
 
         this.canvasWidth = (document.documentElement.clientWidth > maxCanvasWidth) ? maxCanvasWidth : document.documentElement.clientWidth;
-
         this.canvasWidth = this.canvasWidth / this.cellSize;
         this.canvasWidth = Math.floor(this.canvasWidth) * this.cellSize;
         this.canvasWidth -= canvasWidthModifier;
-        this.canvasHeight = (document.documentElement.clientHeight > maxCanvasHeight) ? maxCanvasHeight : document.documentElement.clientHeight;
 
+        this.canvasHeight = (document.documentElement.clientHeight > maxCanvasHeight) ? maxCanvasHeight : document.documentElement.clientHeight;
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
         this.canvasHeight -= canvasHeightModifier;
         this.canvasHeight = this.canvasHeight < minCanvasHeight ? minCanvasHeight : this.canvasHeight;
+
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
     }
@@ -191,21 +192,15 @@ const listeners = (sm, bd) =>
  *****************************************************************************/
 const reCalcDimens = (sm) =>
 {
-    sm.canvasWidth = document.documentElement.clientWidth;
-    if (sm.canvasWidth > 800) 
-    {
-        sm.canvasWidth = 800;
-    }
+    sm.canvasWidth = (document.documentElement.clientWidth > maxCanvasWidth) ? maxCanvasWidth : document.documentElement.clientWidth;
     sm.canvasWidth = sm.canvasWidth / sm.cellSize;
     sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - canvasWidthModifier;
-    sm.canvasHeight = document.documentElement.clientHeight - canvasHeightModifier;
-    if (sm.canvasHeight > 800)
-    {
-        sm.canvasHeight = 800;
-    }
+
+    sm.canvasHeight = (document.documentElement.clientHeight > maxCanvasHeight) ? maxCanvasHeight : document.documentElement.clientHeight;
     sm.canvasHeight = sm.canvasHeight / sm.cellSize;
     sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
-    sm.canvasHeight = sm.canvasHeight < 200 ? 200 : sm.canvasHeight;
+    sm.canvasHeight = sm.canvasHeight < minCanvasHeight ? minCanvasHeight : sm.canvasHeight;
+
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
 }
@@ -613,8 +608,9 @@ const resizeCanvas = (sm) =>
 const main = () =>
 {
     sm = new StateManager;
-    resizeCanvas(sm);
     bd = new Boards(sm.rows, sm.cols);
+    reCalcDimens(sm);
+    resizeCanvas(sm);
     redrawBoard(sm, bd);
     listeners(sm, bd);
 }
