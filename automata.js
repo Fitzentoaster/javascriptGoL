@@ -1,14 +1,17 @@
 //Global Constants
 const randomFactor = 8;
-const maxGps = 25;
-const minGps = 1;
+const maxGps = 20;
+const minGps = 2;
 const cellSizeSmall = 5;
 const cellSizeMed = 10;
 const cellSizeLg = 20;
 const cellSizeXL = 40;
 const minCanvasHeight = 200;
+const maxCanvasHeight = 800;
+const maxCanvasWidth = 800;
 const canvasHeightModifier = 230;
 const canvasWidthModifier = 80;
+const speedStep = 2;
 
 /******************************************************************************
  * State Manager Class: has drawing variables and gamestate boolean
@@ -42,11 +45,14 @@ class StateManager
         this.msWait = 100;
         this.gps = 10;
         this.cellSize = 5;
-        this.canvasWidth = document.documentElement.clientWidth;
+
+        this.canvasWidth = (document.documentElement.clientWidth > maxCanvasWidth) ? maxCanvasWidth : document.documentElement.clientWidth;
+
         this.canvasWidth = this.canvasWidth / this.cellSize;
         this.canvasWidth = Math.floor(this.canvasWidth) * this.cellSize;
         this.canvasWidth -= canvasWidthModifier;
-        this.canvasHeight = document.documentElement.clientHeight;
+        this.canvasHeight = (document.documentElement.clientHeight > maxCanvasHeight) ? maxCanvasHeight : document.documentElement.clientHeight;
+
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
         this.canvasHeight -= canvasHeightModifier;
@@ -186,9 +192,17 @@ const listeners = (sm, bd) =>
 const reCalcDimens = (sm) =>
 {
     sm.canvasWidth = document.documentElement.clientWidth;
+    if (sm.canvasWidth > 800) 
+    {
+        sm.canvasWidth = 800;
+    }
     sm.canvasWidth = sm.canvasWidth / sm.cellSize;
     sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - canvasWidthModifier;
     sm.canvasHeight = document.documentElement.clientHeight - canvasHeightModifier;
+    if (sm.canvasHeight > 800)
+    {
+        sm.canvasHeight = 800;
+    }
     sm.canvasHeight = sm.canvasHeight / sm.cellSize;
     sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
     sm.canvasHeight = sm.canvasHeight < 200 ? 200 : sm.canvasHeight;
@@ -482,7 +496,7 @@ const drawGrid = (sm) =>
  *****************************************************************************/
 const speedUp = (sm) =>
 {
-    sm.gps += 1;
+    sm.gps += speedStep;
     if (sm.gps > maxGps)
     {
         sm.gps = maxGps;
@@ -495,7 +509,7 @@ const speedUp = (sm) =>
  *****************************************************************************/
 const speedDown = (sm) =>
 {
-    sm.gps -= 1;
+    sm.gps -= speedStep;
     if (sm.gps < minGps)
     {
         sm.gps = minGps;
@@ -522,6 +536,7 @@ const sizeUp = (sm, bd) =>
             break;
     }
 
+    reCalcDimens(sm);
     resizeCanvas(sm);
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
@@ -549,7 +564,7 @@ const sizeDown = (sm, bd) =>
             sm.cellSize = cellSizeSmall;
             break;
     }
-
+    reCalcDimens(sm);
     resizeCanvas(sm);
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);
