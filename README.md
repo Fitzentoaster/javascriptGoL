@@ -5,7 +5,8 @@ Simple Game of Life implementation
 Download the source and run index.html in your browser.
 
 # So Far
-When I started this project I was new to Javascript, and I always draw up a 'game of life' in new languages/paradigms
+When I started this project I was refreshing in Javascript after not using it for a few years
+and I always draw up a 'game of life' in new languages/paradigms
 as a method to help me learn the syntax and get used to stuff. Since then, I've updated it significantly with new
 features and better logic.
 
