@@ -1,5 +1,5 @@
 # javascriptGoL
-Simple Game of Life implementation
+Simple Game of Life implementation in Vanilla JS and CSS/HTML
 
 # To Use
 Download the source and run index.html in your browser, or check out the deployed version at Netlify [here](https://javascript-gol.netlify.app/)
