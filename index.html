@@ -12,8 +12,10 @@
   </head>
   
   <body>
+    <br>
     <h3>Game of Life</h3>
-
+    <br>
+    <br>
     <div id="container">
 
       <div id="grid">
@@ -61,7 +63,7 @@
             <span class="tooltiptext">Decrease the size of the Cells</span>
           </div>
           <div class="tooltip">
-            <input type="text" id="sizevalue" disabled value="5PX">
+            <input type="text" id="sizevalue" disabled value="10PX">
             <span class="tooltiptext">Current size of the cells in Pixels</span>
           </div>
         </div>
@@ -69,9 +71,9 @@
           <label for="deadcolorselect">Dead:</label>
           <select id="deadcolorselect">
             <option value="MidnightBlue">Blue</option>
-            <option value="DarkGreen" selected>Green</option>
+            <option value="DarkGreen">Green</option>
             <option value="DarkRed">Red</option>
-            <option value="DarkSlateGrey">Slate</option>
+            <option value="DarkSlateGrey" selected>Slate</option>
             <option value="RebeccaPurple">Purple</option>
           </select>
 
@@ -91,7 +93,7 @@
       </div>
     </div>
     <br>
-    <canvas id="cellboardcanvas" width="800" height="800"></canvas>
+    <canvas id="cellboardcanvas" width="1000" height="1000"></canvas>
   </body>
   <script src="automata.js"></script>
 

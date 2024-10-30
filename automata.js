@@ -1,5 +1,5 @@
 //Global Constants
-const RANDOM_FACTOR = 8;
+const RANDOM_FACTOR = 7;
 const MAX_GPS = 20;
 const MIN_GPS = 2;
 const DEFAULT_GPS = 10;
@@ -8,11 +8,14 @@ const CELL_SIZE_MD = 10;
 const CELL_SIZE_LG = 20;
 const CELL_SIZE_XL = 40;
 const MIN_CANVAS_HEIGHT = 200;
-const MAX_CANVAS_HEIGHT = 600;
-const MAX_CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT_MODIFIER = 230;
-const CANVAS_WIDTH_MODIFIER = 80;
+const MAX_CANVAS_HEIGHT = 1000;
+const MAX_CANVAS_WIDTH = 1000;
+const CANVAS_HEIGHT_MODIFIER = 200;
+const CANVAS_WIDTH_MODIFIER = 40;
 const SPEED_STEP = 2;
+const DEFAULT_LIVE_COLOR = "SandyBrown";
+const DEFAULT_DEAD_COLOR = "DarkSlateGrey";
+const DEFAULT_GRID_COLOR = "Black";
 
 /******************************************************************************
  * State Manager Class: has drawing variables and gamestate boolean
@@ -38,14 +41,14 @@ class StateManager
     {
         this.canvas = document.getElementById("cellboardcanvas");
         this.ctx = this.canvas.getContext("2d");
-        this.liveColor = "SandyBrown";
-        this.deadColor = "DarkGreen";
-        this.gridColor = "Black";
+        this.liveColor = DEFAULT_LIVE_COLOR;
+        this.deadColor = DEFAULT_DEAD_COLOR;
+        this.gridColor = DEFAULT_GRID_COLOR;
         this.isGameActive = false;
         this.isGridActive = false;
         this.gps = DEFAULT_GPS;
         this.msWait = 1000 / this.gps;
-        this.cellSize = CELL_SIZE_SM;
+        this.cellSize = CELL_SIZE_MD;
 
         this.canvasWidth = (document.documentElement.clientWidth > MAX_CANVAS_WIDTH) ? MAX_CANVAS_WIDTH : document.documentElement.clientWidth;
         this.canvasWidth = this.canvasWidth / this.cellSize;
@@ -56,7 +59,7 @@ class StateManager
         this.canvasHeight = this.canvasHeight / this.cellSize;
         this.canvasHeight = Math.floor(this.canvasHeight) * this.cellSize;
         this.canvasHeight -= CANVAS_HEIGHT_MODIFIER;
-        this.canvasHeight = this.canvasHeight < MIN_CANVAS_HEIGHT ? MIN_CANVAS_HEIGHT : this.canvasHeight;
+        this.canvasHeight = (this.canvasHeight < MIN_CANVAS_HEIGHT) ? MIN_CANVAS_HEIGHT : this.canvasHeight;
 
         this.rows = Math.floor(this.canvasHeight / this.cellSize);
         this.cols = Math.floor(this.canvasWidth / this.cellSize);
@@ -194,12 +197,15 @@ const reCalcDimens = (sm) =>
 {
     sm.canvasWidth = (document.documentElement.clientWidth > MAX_CANVAS_WIDTH) ? MAX_CANVAS_WIDTH : document.documentElement.clientWidth;
     sm.canvasWidth = sm.canvasWidth / sm.cellSize;
-    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize - CANVAS_WIDTH_MODIFIER;
+    sm.canvasWidth = Math.floor(sm.canvasWidth) * sm.cellSize;
+    sm.canvasWidth -= CANVAS_WIDTH_MODIFIER;
 
     sm.canvasHeight = (document.documentElement.clientHeight > MAX_CANVAS_HEIGHT) ? MAX_CANVAS_HEIGHT : document.documentElement.clientHeight;
     sm.canvasHeight = sm.canvasHeight / sm.cellSize;
     sm.canvasHeight = Math.floor(sm.canvasHeight) * sm.cellSize;
-    sm.canvasHeight = sm.canvasHeight < MIN_CANVAS_HEIGHT ? MIN_CANVAS_HEIGHT : sm.canvasHeight;
+    sm.canvasHeight -= CANVAS_HEIGHT_MODIFIER;
+    sm.canvasHeight = (sm.canvasHeight < MIN_CANVAS_HEIGHT) ? MIN_CANVAS_HEIGHT : sm.canvasHeight;
+
 
     sm.rows = Math.floor(sm.canvasHeight / sm.cellSize);
     sm.cols = Math.floor(sm.canvasWidth / sm.cellSize);

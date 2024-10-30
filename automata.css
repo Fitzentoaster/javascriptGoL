@@ -1,7 +1,7 @@
 /* OVERALL STYLE */
 body
 {
-    background-color: rgb(10,20,10);
+    background-color: rgb(15, 10, 30);
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     color: antiquewhite;
@@ -77,12 +77,12 @@ h3
     {
         visibility: hidden;
         width: 150px;
-        background-color: darkolivegreen;
+        background-color: rgb(60, 50, 110);
         color: antiquewhite;
         text-align: center;
         position: absolute;
         z-index: 1;
-        bottom: 125%;
+        bottom: 150%;
         left: 50%;
         margin-left: -60px;
         opacity: 0;
@@ -94,7 +94,7 @@ h3
         .tooltip:hover .tooltiptext 
         {
         visibility: visible;
-        opacity: 0.9;
+        opacity: 0.8;
         }
     }
 }
